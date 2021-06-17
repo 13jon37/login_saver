@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
             password = argv[3];
             
             // If there is a 4th arugmuent store it
-            if (argv[4])  asdfasdf// 4th arg is optional
+            if (argv[4])  // 4th arg is optional
                 post_cmd_argument = argv[4];
             
             file << "-----------------------" << std::endl;
