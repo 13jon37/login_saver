@@ -3,6 +3,9 @@
 #include <fstream>
 #include <filesystem>
 
+#define LOGIN_FILE_NAME ".logins"
+#define DATA_SEPERATOR  "-----------------------"
+
 int main(int argc, char *argv[])
 {
     std::string title    = " "; // Website title for example
@@ -26,30 +29,82 @@ int main(int argc, char *argv[])
         else
         {
             const char *arg_one = argv[1];
+            const char *arg_two = argv[2];
             
             if (arg_one == cmd_find)
             {
-                // char *second_arg = argv[2];
-                std::cout << "find\n";
+                std::cout << "Running find command...\n\n";
                 // cout the found shit
                 
+                if (!arg_two)
+                {
+                    std::cerr << "Find cmd needs a second argument!" << std::endl;
+                    break;
+                }
+                
+                std::string arg_two_string = arg_two;
+                std::string to_find = "Website: " + arg_two_string;
+                
+                std::ifstream file(LOGIN_FILE_NAME);
+                
+                namespace fs = std::filesystem;
+                fs::path f{ LOGIN_FILE_NAME };
+                
+                if (!fs::exists(f))
+                {
+                    std::cerr << "There is no database! Please enter login information to create a database!" << std::endl;
+                    break;
+                }
+                
+                std::string line;
+                
+                int count = 0;
+                
+                if (file.is_open())
+                {
+                    while(!file.eof())
+                    {
+                        // Count the number of lines
+                        std::getline(file, line);
+                        ++count;
+                        
+                        if (line == to_find)
+                        {
+                            std::cout << line << "\n";
+                            
+                            // Output the rest of the lines after found line
+                            std::string line_2;
+                            for (int x = 0; x < count; ++x)
+                            {
+                                std::getline(file, line_2);
+                                std::cout << line_2 << std::endl;
+                                
+                                if (line_2 == DATA_SEPERATOR) // this is the mark before the next data so break there
+                                    break;
+                                if (line_2 == "") // check if there is nothing on the line, if so stop iterating
+                                    break;
+                            }
+                        }
+                    }
+                    file.close();
+                }
                 break;
-            }
+            }  
             
             std::ofstream file;
             namespace fs = std::filesystem;
-            fs::path f{ ".logins" };
+            fs::path f{ LOGIN_FILE_NAME };
             
             if (fs::exists(f))
             {
                 std::cout << "\nFile exists.\n";
-                file.open(".logins", std::ios::in | std::ios::app);
+                file.open(LOGIN_FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
             }
             else
             {
                 // Create file
                 std::cout << "\nFile created.\n";
-                file.open(".logins", std::ios::in | std::ios::out | std::ios::app);
+                file.open(LOGIN_FILE_NAME, std::ios::in | std::ios::out | std::ios::app);
             }
             
             // Store input arguments
@@ -61,11 +116,13 @@ int main(int argc, char *argv[])
             if (argv[4])  // 4th arg is optional
                 post_cmd_argument = argv[4];
             
-            file << "-----------------------" << std::endl;
-            file << "Website: " << title << std::endl;
-            file << "Username/Email: " << username << std::endl;
-            file << "Password: " << password << std::endl;
-            
+            if (file.is_open())
+            {
+                file << DATA_SEPERATOR << std::endl;
+                file << "Website: " << title << std::endl;
+                file << "Username/Email: " << username << std::endl;
+                file << "Password: " << password << std::endl;
+            }
             file.close();
             
             if (username != "" && password != "")
