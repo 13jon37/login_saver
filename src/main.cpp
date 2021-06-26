@@ -3,11 +3,8 @@
 #include <fstream>
 #include <filesystem>
 
-// Absolute retard code, dude;
-
 #define LOGIN_FILE_NAME ".logins"
 #define DATA_SEPERATOR  "------------------"
-
 
 /* "Encryption & decryption" it really just moves the character up two ascii letters. */
 static std::string_view
