@@ -8,7 +8,9 @@
 #define LOGIN_FILE_NAME ".logins"
 #define DATA_SEPERATOR  "------------------"
 
-static std::string 
+
+/* "Encryption & decryption" it really just moves the character up two ascii letters. */
+static std::string_view
 encrypt_string(const std::string &input_string)
 {
     char *converted_input_string = (char *)input_string.c_str();
@@ -18,7 +20,7 @@ encrypt_string(const std::string &input_string)
     return converted_input_string;
 }
 
-static std::string 
+static std::string_view 
 decrypt_string(const std::string &input_string)
 {
     char *converted_input_string = (char *)input_string.c_str();
